@@ -25,13 +25,7 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  const timeout = new Promise<{ data: { user: null } }>((resolve) =>
-    setTimeout(() => resolve({ data: { user: null } }), 3000)
-  );
-  const { data: { user } } = await Promise.race([
-    supabase.auth.getUser(),
-    timeout,
-  ]);
+  const { data: { user } } = await supabase.auth.getUser();
 
   const isPublicPath =
     request.nextUrl.pathname.startsWith("/login") ||
