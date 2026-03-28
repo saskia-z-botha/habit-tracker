@@ -85,21 +85,6 @@ export async function POST(request: NextRequest) {
         });
       }));
       synced.push("google_calendar");
-      // Debug info
-      return NextResponse.json({
-        ok: true,
-        synced,
-        debug: {
-          dateParam,
-          diffHours,
-          rawEventCount: rawEvents.length,
-          filteredEventCount: events.length,
-          rawEventTitles: rawEvents.map((e) => ({ title: e.summary, start: e.start.dateTime ?? e.start.date, colorId: e.colorId })),
-          filteredEventTitles: events.map((e) => ({ title: e.summary, start: e.start.dateTime ?? e.start.date, colorId: e.colorId })),
-          habits: calendarHabits.map((h) => ({ id: h.id, name: (h as { name?: string }).name, keywords: h.calendarKeywords, color: h.calendarColor })),
-          matches: matches.map((m) => ({ habitId: m.habitId, keyword: m.matchedKeyword, event: m.matchedEvent.summary })),
-        },
-      });
     }
 
     if (taskHabits.length) {
