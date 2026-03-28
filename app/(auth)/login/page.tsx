@@ -61,7 +61,7 @@ function LoginForm() {
         <form onSubmit={handleOtpSubmit} className="space-y-4">
           <div>
             <p className="text-sm text-pink-400 lowercase mb-4">
-              we sent a 6-digit code to <span className="text-pink-600">{email}</span>
+              we sent a code to <span className="text-pink-600">{email}</span>
             </p>
             <label className="block text-sm font-medium text-pink-900 mb-1.5 lowercase">
               code
@@ -70,8 +70,8 @@ function LoginForm() {
               type="text"
               inputMode="numeric"
               value={token}
-              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              placeholder="000000"
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, ""))}
+              placeholder="enter code"
               required
               autoFocus
               className="w-full px-3.5 py-2.5 rounded-xl border border-pink-200 bg-pink-50 text-pink-900 placeholder:text-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent transition text-sm tracking-widest text-center"
@@ -80,7 +80,7 @@ function LoginForm() {
           {error && <p className="text-sm text-rose-500 lowercase">{error}</p>}
           <button
             type="submit"
-            disabled={loading || token.length !== 6}
+            disabled={loading || token.length === 0}
             className="w-full py-2.5 px-4 bg-pink-500 hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition text-sm lowercase"
           >
             {loading ? "verifying…" : "sign in"}
