@@ -112,6 +112,3 @@ export function getTheme(id: string): Theme {
   return THEMES.find((t) => t.id === id) ?? THEMES[0];
 }
 
-export function themeStyle(vars: Record<string, string>): React.CSSProperties {
-  return vars as React.CSSProperties;
-}
