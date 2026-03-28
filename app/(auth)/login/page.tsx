@@ -29,10 +29,13 @@ function LoginForm() {
       }
     }
 
-    // Redirect to server-side handler for PKCE code exchange
+    // Handle PKCE code exchange client-side
     const code = searchParams.get("code");
     if (code) {
-      window.location.href = `/api/auth/exchange?code=${code}`;
+      const supabase = createClient();
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        router.replace(error ? "/login?error=auth" : "/");
+      });
     }
   }, [searchParams, router]);
 
