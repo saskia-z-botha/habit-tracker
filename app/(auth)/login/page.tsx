@@ -15,18 +15,12 @@ function LoginForm() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Handle implicit flow hash fragment (#access_token=...)
-    const hash = window.location.hash;
-    if (hash) {
-      const params = new URLSearchParams(hash.replace("#", ""));
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      if (accessToken && refreshToken) {
-        const supabase = createClient();
-        supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
-          .then(({ error }) => { if (!error) router.replace("/"); });
-        return;
-      }
+    // Show error from Supabase redirect (e.g. expired link)
+    const errorCode = searchParams.get("error_code");
+    const errorDesc = searchParams.get("error_description");
+    if (errorCode) {
+      setError(errorDesc?.replace(/\+/g, " ") ?? "link invalid or expired");
+      return;
     }
 
     // Handle PKCE code exchange client-side
