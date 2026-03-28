@@ -15,9 +15,24 @@ function LoginForm() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const supabase = createClient();
+
+    // Handle implicit flow hash fragment (#access_token=...)
+    const hash = window.location.hash;
+    if (hash) {
+      const params = new URLSearchParams(hash.replace("#", ""));
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+      if (accessToken && refreshToken) {
+        supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+          .then(({ error }) => { if (!error) router.replace("/"); });
+        return;
+      }
+    }
+
+    // Handle PKCE code as fallback
     const code = searchParams.get("code");
     if (!code) return;
-    const supabase = createClient();
     supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
       if (!error) router.replace("/");
     });
