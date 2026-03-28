@@ -111,7 +111,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-pink-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <h1 className="text-2xl font-semibold text-pink-900 lowercase">habits</h1>
+          <h1 className="text-2xl font-semibold text-pink-900 lowercase">habit tracker</h1>
         </div>
         <Suspense>
           <LoginForm />
