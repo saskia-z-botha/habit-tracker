@@ -109,8 +109,8 @@ export default async function TodayPage({ searchParams }: PageProps) {
         const match = matches.find((m) => m.habitId === habit.id);
         return prisma.habitLog.upsert({
           where: { habitId_date: { habitId: habit.id, date } },
-          create: { habitId: habit.id, userId: user.id, date, completed: matchedIds.has(habit.id), sourceType: "GOOGLE_CALENDAR", rawData: match ? { event: match.matchedEvent, keyword: match.matchedKeyword } : {} },
-          update: { completed: matchedIds.has(habit.id), ...(match ? { rawData: { event: match.matchedEvent, keyword: match.matchedKeyword } } : {}) },
+          create: { habitId: habit.id, userId: user.id, date, completed: matchedIds.has(habit.id), sourceType: "GOOGLE_CALENDAR", rawData: match ? { event: match.matchedEvent as object, keyword: match.matchedKeyword } : {} },
+          update: { completed: matchedIds.has(habit.id), ...(match ? { rawData: { event: match.matchedEvent as object, keyword: match.matchedKeyword } } : {}) },
         });
       }));
     }
