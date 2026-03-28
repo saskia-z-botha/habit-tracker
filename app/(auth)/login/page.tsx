@@ -34,7 +34,11 @@ function LoginForm() {
     if (code) {
       const supabase = createClient();
       supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-        router.replace(error ? "/login?error=auth" : "/");
+        if (error) {
+          setError(error.message);
+        } else {
+          router.replace("/");
+        }
       });
     }
   }, [searchParams, router]);
