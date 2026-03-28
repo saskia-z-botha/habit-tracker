@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>font preview — habit tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600&family=Fredoka:wght@400;500;600&family=Comfortaa:wght@400;500;600&family=Quicksand:wght@400;500;600&family=Figtree:wght@400;500;600&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #fff1f2; /* pink-50 */
+      color: #500724; /* pink-900 */
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+
+    .page-header {
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      color: #9f1239; /* pink-800 */
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: #fff;
+      border: 1px solid #fecdd3; /* pink-200 */
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+    }
+
+    .font-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: lowercase;
+      color: #fb7185; /* pink-400 */
+      margin-bottom: 18px;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .font-name {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      text-transform: lowercase;
+      color: #500724; /* pink-900 */
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: #fecdd3; /* pink-200 */
+      margin-bottom: 20px;
+    }
+
+    .habit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .habit-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .habit-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .habit-dot.done {
+      background-color: #fb7185; /* pink-400 */
+    }
+
+    .habit-dot.pending {
+      border: 1.5px solid #fda4af; /* pink-300 */
+      background: transparent;
+    }
+
+    .habit-text {
+      font-size: 14px;
+      font-weight: 400;
+      text-transform: lowercase;
+      color: #500724;
+      line-height: 1.4;
+    }
+
+    .habit-text.done {
+      color: #9f1239; /* pink-800 */
+      font-weight: 500;
+    }
+
+    .footer-row {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #fecdd3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: lowercase;
+      color: #9f1239; /* pink-800 */
+    }
+
+    .progress-bar-track {
+      width: 80px;
+      height: 4px;
+      background-color: #fecdd3;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 66.6%;
+      background-color: #fb7185;
+      border-radius: 99px;
+    }
+
+    /* per-font application */
+    .font-nunito     { font-family: 'Nunito', sans-serif; }
+    .font-fredoka    { font-family: 'Fredoka', sans-serif; }
+    .font-comfortaa  { font-family: 'Comfortaa', sans-serif; }
+    .font-quicksand  { font-family: 'Quicksand', sans-serif; }
+    .font-figtree    { font-family: 'Figtree', sans-serif; }
+    .font-raleway    { font-family: 'Raleway', sans-serif; }
+  </style>
+</head>
+<body>
+
+  <p class="page-header">font preview — habit tracker</p>
+
+  <div class="grid">
+
+    <!-- Nunito -->
+    <div class="card font-nunito">
+      <div class="font-label">nunito — current favourite</div>
+      <div class="font-name">nunito</div>
+      <div class="divider"></div>
+      <div class="habit-list">
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">sleep 8 hours</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">10,000 steps</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot pending"></div>
+          <span class="habit-text">read 20 pages</span>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span class="progress-label">today — 2 / 3 done</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fredoka -->
+    <div class="card font-fredoka">
+      <div class="font-label">fredoka — playful, rounded</div>
+      <div class="font-name">fredoka</div>
+      <div class="divider"></div>
+      <div class="habit-list">
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">sleep 8 hours</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">10,000 steps</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot pending"></div>
+          <span class="habit-text">read 20 pages</span>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span class="progress-label">today — 2 / 3 done</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comfortaa -->
+    <div class="card font-comfortaa">
+      <div class="font-label">comfortaa — soft, rounded, feminine</div>
+      <div class="font-name">comfortaa</div>
+      <div class="divider"></div>
+      <div class="habit-list">
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">sleep 8 hours</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">10,000 steps</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot pending"></div>
+          <span class="habit-text">read 20 pages</span>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span class="progress-label">today — 2 / 3 done</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quicksand -->
+    <div class="card font-quicksand">
+      <div class="font-label">quicksand — light, airy</div>
+      <div class="font-name">quicksand</div>
+      <div class="divider"></div>
+      <div class="habit-list">
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">sleep 8 hours</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">10,000 steps</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot pending"></div>
+          <span class="habit-text">read 20 pages</span>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span class="progress-label">today — 2 / 3 done</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Figtree -->
+    <div class="card font-figtree">
+      <div class="font-label">figtree — modern friendly</div>
+      <div class="font-name">figtree</div>
+      <div class="divider"></div>
+      <div class="habit-list">
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">sleep 8 hours</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">10,000 steps</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot pending"></div>
+          <span class="habit-text">read 20 pages</span>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span class="progress-label">today — 2 / 3 done</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raleway -->
+    <div class="card font-raleway">
+      <div class="font-label">raleway — elegant with personality</div>
+      <div class="font-name">raleway</div>
+      <div class="divider"></div>
+      <div class="habit-list">
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">sleep 8 hours</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot done"></div>
+          <span class="habit-text done">10,000 steps</span>
+        </div>
+        <div class="habit-item">
+          <div class="habit-dot pending"></div>
+          <span class="habit-text">read 20 pages</span>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span class="progress-label">today — 2 / 3 done</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

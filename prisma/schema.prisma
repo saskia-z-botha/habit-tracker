@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+
+  ouraAccessToken    String?
+  ouraRefreshToken   String?
+  ouraTokenExpiresAt DateTime?
+
+  googleAccessToken    String?
+  googleRefreshToken   String?
+  googleTokenExpiresAt DateTime?
+  googleCalendarIds    String[]  // selected calendar IDs; empty = all
+
+  theme     String    @default("pink")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  habits    Habit[]
+  habitLogs HabitLog[]
+
+  @@map("users")
+}
+
+model Habit {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  icon      String?
+  color     String?     @default("pink")
+  isActive  Boolean     @default(true)
+  sortOrder Int         @default(0)
+  sourceType SourceType @default(MANUAL)
+
+  // Oura-specific
+  ouraMetric String?
+  ouraTarget Float?
+
+  // Google Calendar-specific
+  calendarKeywords String[]
+  calendarColor    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logs      HabitLog[]
+
+  @@map("habits")
+}
+
+model HabitLog {
+  id      String @id @default(cuid())
+  habitId String
+  habit   Habit  @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date       DateTime   @db.Date
+  completed  Boolean    @default(false)
+  sourceType SourceType @default(MANUAL)
+  rawData    Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([habitId, date])
+  @@index([userId, date])
+  @@map("habit_logs")
+}
+
+enum SourceType {
+  MANUAL
+  OURA_SLEEP
+  OURA_STEPS
+  GOOGLE_CALENDAR
+  GOOGLE_TASKS
+  SCREENSHOT_AI
+}

@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  /* Pink palette */
+  --color-pink-50: #fdf2f8;
+  --color-pink-100: #fce7f3;
+  --color-pink-200: #fbcfe8;
+  --color-pink-300: #f9a8d4;
+  --color-pink-400: #f472b6;
+  --color-pink-500: #ec4899;
+  --color-pink-600: #db2777;
+  --color-pink-700: #be185d;
+
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6;
+  --color-rose-200: #fecdd3;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+
+  /* Semantic tokens */
+  --color-background: #fdf2f8;
+  --color-surface: #ffffff;
+  --color-muted: #f9a8d4;
+  --color-muted-foreground: #9d174d;
+  --color-border: #fbcfe8;
+  --color-foreground: #1f0a14;
+  --color-foreground-muted: #6b2d4e;
+
+  /* Typography */
+  --font-sans: "Geist", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+}
+
+:root {
+  --background: var(--color-pink-50);
+  --foreground: #1f0a14;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #fbcfe8;
+  border-radius: 999px;
+}
+
+/* Focus ring */
+*:focus-visible {
+  outline: 2px solid #f472b6;
+  outline-offset: 2px;
+}

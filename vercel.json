@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/oura/sync",
+      "schedule": "0 19 * * *"
+    },
+    {
+      "path": "/api/oura/sync",
+      "schedule": "59 6 * * *"
+    },
+    {
+      "path": "/api/google-calendar/sync",
+      "schedule": "0 19 * * *"
+    },
+    {
+      "path": "/api/google-calendar/sync",
+      "schedule": "59 6 * * *"
+    }
+  ]
+}
