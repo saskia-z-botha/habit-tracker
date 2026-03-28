@@ -15,8 +15,6 @@ function LoginForm() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const supabase = createClient();
-
     // Handle implicit flow hash fragment (#access_token=...)
     const hash = window.location.hash;
     if (hash) {
@@ -24,18 +22,18 @@ function LoginForm() {
       const accessToken = params.get("access_token");
       const refreshToken = params.get("refresh_token");
       if (accessToken && refreshToken) {
+        const supabase = createClient();
         supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
           .then(({ error }) => { if (!error) router.replace("/"); });
         return;
       }
     }
 
-    // Handle PKCE code as fallback
+    // Redirect to server-side handler for PKCE code exchange
     const code = searchParams.get("code");
-    if (!code) return;
-    supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-      if (!error) router.replace("/");
-    });
+    if (code) {
+      window.location.href = `/api/auth/exchange?code=${code}`;
+    }
   }, [searchParams, router]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -107,7 +105,6 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
           <h1 className="text-2xl font-semibold text-pink-900 lowercase">habits</h1>
-          <p className="text-sm text-pink-400 mt-1 lowercase">your daily ritual tracker</p>
         </div>
         <Suspense>
           <LoginForm />
