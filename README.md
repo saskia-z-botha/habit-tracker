@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# habit tracker
 
-## Getting Started
+A personal daily habit tracker that automatically syncs with your Oura Ring and Google Calendar so you don't have to log everything manually.
 
-First, run the development server:
+![Today view](screenshots/today.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Daily tracking**
+- See all your habits for the day and mark them complete
+- Progress counter shows how many you've done
+- Navigate back through previous days
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Auto-sync integrations**
+- **Oura Ring** — sleep and step habits are marked automatically based on your ring data (e.g. 8+ hours sleep, 10,000 steps)
+- **Google Calendar** — habits are detected from your calendar events by keyword (e.g. an event called "gym" marks your exercise habit done)
+- **Google Tasks** — habits can also be matched from completed tasks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**History**
+- Monthly calendar view showing completion for each day
+- Filter by individual habit to see streaks at a glance
 
-## Learn More
+![History view](screenshots/calendar-all.png)
+![Habit history](screenshots/calendar-sleep.png)
 
-To learn more about Next.js, take a look at the following resources:
+**Adding habits**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![New habit](screenshots/new-habit.png)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Habits can be tracked manually or connected to a data source. For Google Calendar habits, enter comma-separated keywords — any calendar event matching a keyword marks the habit as done.
 
-## Deploy on Vercel
+**Settings**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+![Settings](screenshots/settings.png)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Connect Oura Ring and Google Calendar
+- Choose which calendars to sync
+- Pick a color theme (pink, purple, blue, green, peach)
+
+## Tech stack
+
+- [Next.js 16](https://nextjs.org) (App Router)
+- [Supabase](https://supabase.com) — auth (OTP email login)
+- [Prisma](https://prisma.io) + PostgreSQL — database
+- [Tailwind CSS](https://tailwindcss.com)
+- Deployed on [Vercel](https://vercel.com)
+
+## Running locally
+
+1. Clone the repo
+2. Copy `.env.local.example` to `.env.local` and fill in the values
+3. Run `npm install`
+4. Run `npm run dev`
+
+Open [http://localhost:3000](http://localhost:3000).
