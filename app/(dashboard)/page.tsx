@@ -124,8 +124,8 @@ export default async function TodayPage({ searchParams }: PageProps) {
         );
         await prisma.habitLog.upsert({
           where: { habitId_date: { habitId: habit.id, date } },
-          create: { habitId: habit.id, userId: user.id, date, completed: !!matched, sourceType: "GOOGLE_TASKS", rawData: matched ? { task: matched } : {} },
-          update: { completed: !!matched, ...(matched ? { rawData: { task: matched } } : {}) },
+          create: { habitId: habit.id, userId: user.id, date, completed: !!matched, sourceType: "GOOGLE_TASKS", rawData: matched ? { task: matched as object } : {} },
+          update: { completed: !!matched, ...(matched ? { rawData: { task: matched as object } } : {}) },
         });
       }
     }
