@@ -35,7 +35,9 @@ export async function POST(request: NextRequest) {
       if (sleepHabit) {
         const sleep = await fetchOuraSleep(user.id, yesterdayStr);
         if (sleep) {
-          const completed = sleep.total_sleep_duration >= (sleepHabit.ouraTarget ?? 28800);
+          const completed = sleep.total_sleep_duration !== null
+            ? sleep.total_sleep_duration >= (sleepHabit.ouraTarget ?? 28800)
+            : (sleep.score ?? 0) >= 70;
           await prisma.habitLog.upsert({
             where: {
               habitId_date: {
