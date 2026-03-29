@@ -119,8 +119,8 @@ export async function fetchOuraActivity(userId: string, date: string): Promise<O
 
   if (!entries.length) return null;
 
-  // Prefer the entry for the requested date; fall back to the most recent entry available
-  const entry = entries.find(e => e.day === date) ?? entries[entries.length - 1];
+  const entry = entries.find(e => e.day === date);
+  if (!entry) return null;
 
   return { date: entry.day, steps: entry.steps };
 }
