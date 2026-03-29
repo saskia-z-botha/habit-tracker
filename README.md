@@ -2,7 +2,7 @@
 
 A personal daily habit tracker that automatically syncs with your Oura Ring and Google Calendar so you don't have to log everything manually.
 
-![Today view](screenshots/today.png)
+<img src="screenshots/today.png" width="300" />
 
 ## Features
 
@@ -20,18 +20,18 @@ A personal daily habit tracker that automatically syncs with your Oura Ring and 
 - Monthly calendar view showing completion for each day
 - Filter by individual habit to see streaks at a glance
 
-![History view](screenshots/calendar-all.png)
-![Habit history](screenshots/calendar-sleep.png)
+<img src="screenshots/calendar-all.png" width="300" />
+<img src="screenshots/calendar-sleep.png" width="300" />
 
 **Adding habits**
 
-![New habit](screenshots/new-habit.png)
+<img src="screenshots/new-habit.png" width="300" />
 
 Habits can be tracked manually or connected to a data source. For Google Calendar habits, enter comma-separated keywords — any calendar event matching a keyword marks the habit as done.
 
 **Settings**
 
-![Settings](screenshots/settings.png)
+<img src="screenshots/settings.png" width="300" />
 
 - Connect Oura Ring and Google Calendar
 - Choose which calendars to sync
