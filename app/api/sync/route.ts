@@ -35,24 +35,26 @@ export async function POST(request: NextRequest) {
     const sleep = sleepResult.status === "fulfilled" ? sleepResult.value : null;
     const activity = activityResult.status === "fulfilled" ? activityResult.value : null;
 
-    if (sleepHabit && sleep) {
-      const completed = sleep.total_sleep_duration !== null
-        ? sleep.total_sleep_duration >= (sleepHabit.ouraTarget ?? 28800)
-        : (sleep.score ?? 0) >= 70;
+    if (sleepHabit) {
+      const completed = sleep
+        ? (sleep.total_sleep_duration !== null
+          ? sleep.total_sleep_duration >= (sleepHabit.ouraTarget ?? 28800)
+          : (sleep.score ?? 0) >= 70)
+        : false;
       await prisma.habitLog.upsert({
         where: { habitId_date: { habitId: sleepHabit.id, date } },
-        create: { habitId: sleepHabit.id, userId: user.id, date, completed, sourceType: "OURA_SLEEP", rawData: sleep as object },
-        update: { completed, rawData: sleep as object },
+        create: { habitId: sleepHabit.id, userId: user.id, date, completed, sourceType: "OURA_SLEEP", rawData: sleep ? sleep as object : {} },
+        update: { completed, rawData: sleep ? sleep as object : {} },
       });
       synced.push("oura_sleep");
     }
 
-    if (stepsHabit && activity) {
-      const completed = activity.steps >= (stepsHabit.ouraTarget ?? 10000);
+    if (stepsHabit) {
+      const completed = activity ? activity.steps >= (stepsHabit.ouraTarget ?? 10000) : false;
       await prisma.habitLog.upsert({
         where: { habitId_date: { habitId: stepsHabit.id, date } },
-        create: { habitId: stepsHabit.id, userId: user.id, date, completed, sourceType: "OURA_STEPS", rawData: activity as object },
-        update: { completed, rawData: activity as object },
+        create: { habitId: stepsHabit.id, userId: user.id, date, completed, sourceType: "OURA_STEPS", rawData: activity ? activity as object : {} },
+        update: { completed, rawData: activity ? activity as object : {} },
       });
       synced.push("oura_steps");
     }

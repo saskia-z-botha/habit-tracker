@@ -6,19 +6,25 @@ import { prisma } from "@/lib/db/prisma";
 import { toDateString } from "@/lib/utils";
 import { HistoryCalendar } from "@/components/history/HistoryCalendar";
 
-export default async function HistoryPage() {
+interface HistoryPageProps {
+  searchParams: Promise<{ month?: string; year?: string }>;
+}
+
+export default async function HistoryPage({ searchParams }: HistoryPageProps) {
   const user = await getUser();
   if (!user) redirect("/login");
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const params = await searchParams;
+  const now = new Date();
+
+  const year = params.year ? parseInt(params.year) : now.getFullYear();
+  const month = params.month ? parseInt(params.month) - 1 : now.getMonth(); // URL is 1-indexed, JS is 0-indexed
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-  const startOfMonth = new Date(year, month, 1);
-  const endOfMonth = new Date(year, month + 1, 0);
+  const startOfMonth = new Date(Date.UTC(year, month, 1));
+  const endOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
 
   const habits = await prisma.habit.findMany({
     where: { userId: user.id, isActive: true },
@@ -35,19 +41,16 @@ export default async function HistoryPage() {
 
   const totalHabits = habits.length;
 
-  // Percentage view: grouped by date
   const logsByDate: Record<string, { total: number; completed: number }> = {};
-  // Binary view: "habitId|dateStr" -> completed
   const logsByHabitDate: Record<string, boolean> = {};
 
-  // Sort descending so T12:00:00Z (noon) is preferred over T00:00:00Z (midnight) when deduplicating
   const sortedLogs = [...logs].sort((a, b) => b.date.getTime() - a.date.getTime());
   const seenHabitDates = new Set<string>();
 
   for (const log of sortedLogs) {
     const dateStr = toDateString(log.date);
     const key = `${log.habitId}|${dateStr}`;
-    if (seenHabitDates.has(key)) continue; // skip duplicate records for same habit+day
+    if (seenHabitDates.has(key)) continue;
     seenHabitDates.add(key);
 
     if (!logsByDate[dateStr]) logsByDate[dateStr] = { total: 0, completed: 0 };
@@ -56,11 +59,17 @@ export default async function HistoryPage() {
     logsByHabitDate[key] = log.completed;
   }
 
-  const monthName = today.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  // Prev/next month links (month in URL is 1-indexed)
+  const prevMonthDate = new Date(year, month - 1, 1);
+  const nextMonthDate = new Date(year, month + 1, 1);
+  const prevUrl = `/history?month=${prevMonthDate.getMonth() + 1}&year=${prevMonthDate.getFullYear()}`;
+  const nextUrl = `/history?month=${nextMonthDate.getMonth() + 1}&year=${nextMonthDate.getFullYear()}`;
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+
+  const monthName = new Date(year, month, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return (
     <div className="max-w-lg mx-auto px-4 py-8 pb-24 md:pb-8">
-      <h1 className="text-xl font-semibold text-pink-900 mb-6 lowercase">{monthName}</h1>
       <HistoryCalendar
         year={year}
         month={month}
@@ -70,6 +79,10 @@ export default async function HistoryPage() {
         logsByDate={logsByDate}
         logsByHabitDate={logsByHabitDate}
         habits={habits}
+        monthName={monthName}
+        prevUrl={prevUrl}
+        nextUrl={nextUrl}
+        isCurrentMonth={isCurrentMonth}
       />
     </div>
   );

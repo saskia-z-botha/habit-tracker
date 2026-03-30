@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { toDateString } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Habit {
   id: string;
@@ -22,6 +23,10 @@ interface Props {
   logsByDate: Record<string, DayLog>;
   logsByHabitDate: Record<string, boolean>;
   habits: Habit[];
+  monthName: string;
+  prevUrl: string;
+  nextUrl: string;
+  isCurrentMonth: boolean;
 }
 
 export function HistoryCalendar({
@@ -33,7 +38,12 @@ export function HistoryCalendar({
   logsByDate,
   logsByHabitDate,
   habits,
+  monthName,
+  prevUrl,
+  nextUrl,
+  isCurrentMonth,
 }: Props) {
+  const router = useRouter();
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const [selectedHabit, setSelectedHabit] = useState<string | null>(null);
@@ -42,6 +52,28 @@ export function HistoryCalendar({
 
   return (
     <div className="space-y-4">
+      {/* Month navigation */}
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-xl font-semibold text-pink-900 lowercase">{monthName}</h1>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => router.push(prevUrl)}
+            className="p-1.5 rounded-lg hover:bg-pink-100 text-pink-400 hover:text-pink-600 transition"
+            aria-label="Previous month"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            onClick={() => router.push(nextUrl)}
+            disabled={isCurrentMonth}
+            className="p-1.5 rounded-lg hover:bg-pink-100 text-pink-400 hover:text-pink-600 disabled:opacity-30 disabled:cursor-not-allowed transition"
+            aria-label="Next month"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      </div>
+
       {/* Habit selector */}
       <div className="flex flex-wrap gap-2">
         <button
@@ -111,8 +143,9 @@ export function HistoryCalendar({
             return (
               <div
                 key={day}
-                className={`aspect-square rounded-xl flex items-center justify-center text-xs font-medium transition cursor-default
-                  ${isFuture ? "opacity-30" : ""}
+                onClick={() => { if (!isFuture) router.push(`/?date=${dateStr}`); }}
+                className={`aspect-square rounded-xl flex items-center justify-center text-xs font-medium transition
+                  ${isFuture ? "opacity-30 cursor-default" : "cursor-pointer hover:ring-2 hover:ring-pink-300"}
                   ${isCurrentDay ? "ring-2 ring-pink-400" : ""}
                 `}
                 style={{ backgroundColor: bg, color: textColor }}
