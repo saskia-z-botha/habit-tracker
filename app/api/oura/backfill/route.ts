@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { prisma } from "@/lib/db/prisma";
 import { decrypt } from "@/lib/crypto";
+import { toDateString } from "@/lib/utils";
 
 const OURA_API_BASE = "https://api.ouraring.com/v2";
 
@@ -10,8 +11,10 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const startDate = searchParams.get("start") || "2026-03-01";
-  const endDate = searchParams.get("end") || "2026-03-27";
+  const now = new Date();
+  const startOfMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
+  const startDate = searchParams.get("start") || startOfMonth;
+  const endDate = searchParams.get("end") || toDateString(now);
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser?.ouraAccessToken) return NextResponse.json({ error: "No Oura token" }, { status: 400 });
@@ -25,7 +28,7 @@ export async function POST(request: NextRequest) {
 
   const results = { steps: 0, sleep: 0, errors: [] as string[] };
 
-  // Backfill steps
+  // Backfill steps — daily_activity.day is the local calendar day, use it directly
   if (stepsHabit) {
     const res = await fetch(
       `${OURA_API_BASE}/usercollection/daily_activity?start_date=${startDate}&end_date=${endDate}`,
@@ -51,8 +54,13 @@ export async function POST(request: NextRequest) {
 
   // Backfill sleep
   if (sleepHabit) {
+    // Fetch one extra day before start to catch sessions that started the night before
+    const prevStart = new Date(startDate + "T12:00:00Z");
+    prevStart.setUTCDate(prevStart.getUTCDate() - 1);
+    const fetchStart = prevStart.toISOString().split("T")[0];
+
     const [sessionsRes, dailyRes] = await Promise.all([
-      fetch(`${OURA_API_BASE}/usercollection/sleep?start_date=${startDate}&end_date=${endDate}`,
+      fetch(`${OURA_API_BASE}/usercollection/sleep?start_date=${fetchStart}&end_date=${endDate}`,
         { headers: { Authorization: `Bearer ${token}` } }),
       fetch(`${OURA_API_BASE}/usercollection/daily_sleep?start_date=${startDate}&end_date=${endDate}`,
         { headers: { Authorization: `Bearer ${token}` } }),
@@ -60,19 +68,21 @@ export async function POST(request: NextRequest) {
 
     if (sessionsRes.ok && dailyRes.ok) {
       const [sessionsData, dailyData] = await Promise.all([sessionsRes.json(), dailyRes.json()]);
-      const sessions: Array<{ day: string; total_sleep_duration: number; efficiency: number; type?: string }> = sessionsData.data ?? [];
+      const sessions: Array<{ bedtime_end?: string; total_sleep_duration: number; efficiency: number; type?: string }> = sessionsData.data ?? [];
       const dailyEntries: Array<{ day: string; score: number }> = dailyData.data ?? [];
 
-      // Group sessions by day
-      const sessionsByDay = new Map<string, typeof sessions>();
+      // Group sessions by bedtime_end local date (the day the sleep belongs to)
+      const sessionsByEndDate = new Map<string, typeof sessions>();
       for (const s of sessions) {
-        const arr = sessionsByDay.get(s.day) ?? [];
+        const endDay = s.bedtime_end ? s.bedtime_end.slice(0, 10) : null;
+        if (!endDay) continue;
+        const arr = sessionsByEndDate.get(endDay) ?? [];
         arr.push(s);
-        sessionsByDay.set(s.day, arr);
+        sessionsByEndDate.set(endDay, arr);
       }
 
       for (const daily of dailyEntries) {
-        const daySessions = sessionsByDay.get(daily.day) ?? [];
+        const daySessions = sessionsByEndDate.get(daily.day) ?? [];
         const mainSession = daySessions.find(s => s.type === "long_sleep") ?? daySessions[0] ?? null;
         const total_sleep_duration = mainSession?.total_sleep_duration ?? null;
         const efficiency = mainSession?.efficiency ?? 0;

@@ -11,6 +11,7 @@ interface OuraConnectButtonProps {
 export function OuraConnectButton({ connected }: OuraConnectButtonProps) {
   const router = useRouter();
   const [syncing, setSyncing] = useState(false);
+  const [backfilling, setBackfilling] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [disconnecting, setDisconnecting] = useState(false);
 
@@ -18,6 +19,18 @@ export function OuraConnectButton({ connected }: OuraConnectButtonProps) {
     setDisconnecting(true);
     await fetch("/api/oura/disconnect", { method: "POST" });
     router.refresh();
+  }
+
+  async function handleBackfill() {
+    setBackfilling(true);
+    try {
+      const res = await fetch("/api/oura/backfill", { method: "POST" });
+      const data = await res.json();
+      setLastSync(`backfilled ${data.sleep ?? 0} sleep days, ${data.steps ?? 0} step days`);
+      router.refresh();
+    } finally {
+      setBackfilling(false);
+    }
   }
 
   async function handleSync() {
@@ -42,9 +55,12 @@ export function OuraConnectButton({ connected }: OuraConnectButtonProps) {
           <span className="w-2 h-2 rounded-full bg-green-400 shrink-0" />
           <span className="text-pink-700 font-medium">Oura connected</span>
         </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" size="sm" onClick={handleSync} disabled={syncing}>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" size="sm" onClick={handleSync} disabled={syncing || backfilling}>
             {syncing ? "Syncing…" : "↻ Sync now"}
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleBackfill} disabled={syncing || backfilling}>
+            {backfilling ? "Backfilling…" : "↺ Fix this month"}
           </Button>
           <Button variant="ghost" size="sm" onClick={handleDisconnect} disabled={disconnecting} className="text-pink-300 hover:text-rose-500">
             Disconnect
