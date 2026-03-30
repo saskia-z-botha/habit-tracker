@@ -83,18 +83,20 @@ export async function fetchOuraSleep(userId: string, date: string): Promise<Oura
     dailyRes.ok ? dailyRes.json() : { data: [] },
   ]);
 
-  const sessions: Array<{ day: string; total_sleep_duration: number; efficiency: number; type?: string }> = sessionsData.data ?? [];
+  const sessions: Array<{ day: string; bedtime_end?: string; total_sleep_duration: number; efficiency: number; type?: string }> = sessionsData.data ?? [];
   const daily = dailyData.data?.[0] ?? null;
 
   if (!sessions.length && !daily) return null;
 
-  // Filter to sessions for the target date (day = wake-up date in Oura v2)
-  // Fall back to prevDate sessions if none found (edge case: sleep ending just after midnight)
-  const dateSessions = sessions.filter(s => s.day === date);
-  const sessionPool = dateSessions.length > 0 ? dateSessions : sessions.filter(s => s.day === prevDate);
+  // Match sessions by bedtime_end local date — the sleep that ended on `date` belongs to that day.
+  // e.g. bedtime_end "2026-03-30T07:00:00-07:00" → local date "2026-03-30" → belongs to March 30.
+  const todaySessions = sessions.filter(s => {
+    if (!s.bedtime_end) return s.day === date;
+    return s.bedtime_end.slice(0, 10) === date;
+  });
 
   // Prefer the long_sleep session (main overnight sleep, not naps)
-  const mainSession = sessionPool.find(s => s.type === "long_sleep") ?? sessionPool[0] ?? null;
+  const mainSession = todaySessions.find(s => s.type === "long_sleep") ?? todaySessions[0] ?? null;
 
   const total_sleep_duration = mainSession?.total_sleep_duration ?? null;
   const efficiency = mainSession?.efficiency ?? 0;
