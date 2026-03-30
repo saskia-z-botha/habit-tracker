@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/oura/sync",
-      "schedule": "59 6 * * *"
+      "schedule": "0 15 * * *"
     },
     {
       "path": "/api/google-calendar/sync",
@@ -14,7 +14,7 @@
     },
     {
       "path": "/api/google-calendar/sync",
-      "schedule": "59 6 * * *"
+      "schedule": "0 15 * * *"
     }
   ]
 }
