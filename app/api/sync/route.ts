@@ -19,6 +19,10 @@ export async function POST(request: NextRequest) {
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   const synced: string[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let activityDebug: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sleepDebug: any = null;
 
   // Oura sync
   if (dbUser.ouraAccessToken) {
@@ -34,6 +38,8 @@ export async function POST(request: NextRequest) {
 
     const sleep = sleepResult.status === "fulfilled" ? sleepResult.value : null;
     const activity = activityResult.status === "fulfilled" ? activityResult.value : null;
+    sleepDebug = sleep;
+    activityDebug = activity;
 
     if (sleepHabit) {
       const completed = sleep
@@ -105,5 +111,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, synced });
+  return NextResponse.json({ ok: true, synced, _debug: { dateParam, activity: activityDebug, sleep: sleepDebug } });
 }
