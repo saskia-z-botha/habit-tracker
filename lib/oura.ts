@@ -67,14 +67,18 @@ export async function fetchOuraSleep(userId: string, date: string): Promise<Oura
   // Oura tags sleep sessions by bedtime_start date, but daily_sleep uses the wake-up date.
   // A session starting March 22 at 11pm has day="2026-03-22", but daily_sleep.day="2026-03-23".
   // Query prev day + current day to catch sessions regardless of which side of midnight they start.
-  const prev = new Date(date + "T12:00:00Z");
+  const d = new Date(date + "T12:00:00Z");
+  const prev = new Date(d);
   prev.setUTCDate(prev.getUTCDate() - 1);
   const prevDate = prev.toISOString().split("T")[0];
+  const next = new Date(d);
+  next.setUTCDate(next.getUTCDate() + 1);
+  const nextDate = next.toISOString().split("T")[0];
 
   const [sessionsRes, dailyRes] = await Promise.all([
-    fetch(`${OURA_API_BASE}/usercollection/sleep?start_date=${prevDate}&end_date=${date}`,
+    fetch(`${OURA_API_BASE}/usercollection/sleep?start_date=${prevDate}&end_date=${nextDate}`,
       { headers: { Authorization: `Bearer ${token}` } }),
-    fetch(`${OURA_API_BASE}/usercollection/daily_sleep?start_date=${date}&end_date=${date}`,
+    fetch(`${OURA_API_BASE}/usercollection/daily_sleep?start_date=${date}&end_date=${nextDate}`,
       { headers: { Authorization: `Bearer ${token}` } }),
   ]);
 
@@ -111,12 +115,16 @@ export async function fetchOuraActivity(userId: string, date: string): Promise<O
 
   // Query prev day too — like sleep, activity can be attributed to a different date
   // depending on when the ring last synced relative to midnight.
-  const prev = new Date(date + "T12:00:00Z");
+  const d = new Date(date + "T12:00:00Z");
+  const prev = new Date(d);
   prev.setUTCDate(prev.getUTCDate() - 1);
   const prevDate = prev.toISOString().split("T")[0];
+  const next = new Date(d);
+  next.setUTCDate(next.getUTCDate() + 1);
+  const nextDate = next.toISOString().split("T")[0];
 
   const res = await fetch(
-    `${OURA_API_BASE}/usercollection/daily_activity?start_date=${prevDate}&end_date=${date}`,
+    `${OURA_API_BASE}/usercollection/daily_activity?start_date=${prevDate}&end_date=${nextDate}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
 
