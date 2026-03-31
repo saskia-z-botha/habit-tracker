@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const todayStr = toDateString(new Date());
+  const { searchParams } = new URL(request.url);
+  const todayStr = searchParams.get("date") || toDateString(new Date());
 
   const results = { sleep: null as boolean | null, steps: null as number | null };
 

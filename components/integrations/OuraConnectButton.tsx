@@ -35,8 +35,9 @@ export function OuraConnectButton({ connected }: OuraConnectButtonProps) {
 
   async function handleSync() {
     setSyncing(true);
+    const localDate = new Intl.DateTimeFormat("en-CA").format(new Date());
     try {
-      const res = await fetch("/api/oura/sync-user", { method: "POST" });
+      const res = await fetch(`/api/oura/sync-user?date=${localDate}`, { method: "POST" });
       const data = await res.json();
       const parts = [];
       if (data.steps !== null && data.steps !== undefined) parts.push(`${data.steps.toLocaleString()} steps`);

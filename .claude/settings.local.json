@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(find /Users/saskiabotha/Desktop/Projects/habit-tracker -type f -name .env*)",
-      "Bash(ls *.env* .env*)"
+      "Bash(ls *.env* .env*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
