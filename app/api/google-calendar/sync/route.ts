@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { fetchCalendarEvents } from "@/lib/google-calendar";
 import { mapEventsToHabits, filterEventsByLocalDate } from "@/lib/habit-mapper";
-import { toDateString } from "@/lib/utils";
+import { localDateString } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const todayStr = toDateString(new Date());
+  const todayStr = localDateString();
 
   const users = await prisma.user.findMany({
     where: { googleAccessToken: { not: null } },

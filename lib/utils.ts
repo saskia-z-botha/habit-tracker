@@ -23,6 +23,12 @@ export function toDateString(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+// Returns today's date in YYYY-MM-DD format in the America/Los_Angeles timezone (PST/PDT).
+// Use this on the server wherever "today" means the user's local calendar day.
+export function localDateString(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(date);
+}
+
 export function fromDateString(dateStr: string): Date {
   return new Date(dateStr + "T12:00:00Z");
 }

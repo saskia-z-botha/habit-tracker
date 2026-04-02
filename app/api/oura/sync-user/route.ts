@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { fetchOuraSleep, fetchOuraActivity } from "@/lib/oura";
 import { getUser } from "@/lib/supabase/server";
-import { toDateString } from "@/lib/utils";
+import { localDateString } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const todayStr = searchParams.get("date") || toDateString(new Date());
+  const todayStr = searchParams.get("date") || localDateString();
 
   const results = { sleep: null as boolean | null, steps: null as number | null };
 

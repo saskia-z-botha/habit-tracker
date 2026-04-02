@@ -5,14 +5,14 @@ import { fetchOuraSleep, fetchOuraActivity } from "@/lib/oura";
 import { fetchCalendarEvents } from "@/lib/google-calendar";
 import { fetchCompletedTasksForDate } from "@/lib/google-tasks";
 import { mapEventsToHabits, filterEventsByLocalDate } from "@/lib/habit-mapper";
-import { toDateString } from "@/lib/utils";
+import { toDateString, localDateString } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const dateParam = searchParams.get("date") || toDateString(new Date());
+  const dateParam = searchParams.get("date") || localDateString();
   const date = new Date(dateParam + "T12:00:00Z");
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });

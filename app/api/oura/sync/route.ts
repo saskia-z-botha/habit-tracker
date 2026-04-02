@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { fetchOuraSleep, fetchOuraActivity } from "@/lib/oura";
-import { toDateString } from "@/lib/utils";
+import { localDateString } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   // Protect cron endpoint
@@ -10,12 +10,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  const todayStr = toDateString(today);
-  const yesterdayStr = toDateString(yesterday);
+  const todayStr = localDateString();
+  const prev = new Date(todayStr + "T12:00:00Z");
+  prev.setUTCDate(prev.getUTCDate() - 1);
+  const yesterdayStr = prev.toISOString().slice(0, 10);
 
   // Get all users with Oura connected
   const users = await prisma.user.findMany({

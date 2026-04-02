@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { prisma } from "@/lib/db/prisma";
 import { decrypt } from "@/lib/crypto";
-import { toDateString } from "@/lib/utils";
+import { localDateString } from "@/lib/utils";
 
 const OURA_API_BASE = "https://api.ouraring.com/v2";
 
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   // Use local date passed from client to avoid UTC date being wrong for the user's timezone.
   // end_date is exclusive in Oura API, so use tomorrow to include today's data.
-  const localDate = searchParams.get("date") || toDateString(new Date());
+  const localDate = searchParams.get("date") || localDateString();
   const [year, month] = localDate.split("-");
   const startOfMonth = `${year}-${month}-01`;
   const startDate = searchParams.get("start") || startOfMonth;
