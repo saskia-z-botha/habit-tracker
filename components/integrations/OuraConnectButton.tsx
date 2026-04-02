@@ -23,8 +23,9 @@ export function OuraConnectButton({ connected }: OuraConnectButtonProps) {
 
   async function handleBackfill() {
     setBackfilling(true);
+    const localDate = new Intl.DateTimeFormat("en-CA").format(new Date());
     try {
-      const res = await fetch("/api/oura/backfill", { method: "POST" });
+      const res = await fetch(`/api/oura/backfill?date=${localDate}`, { method: "POST" });
       const data = await res.json();
       setLastSync(`backfilled ${data.sleep ?? 0} sleep days, ${data.steps ?? 0} step days`);
       router.refresh();

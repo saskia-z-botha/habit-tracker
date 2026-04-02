@@ -11,10 +11,15 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const now = new Date();
-  const startOfMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
+  // Use local date passed from client to avoid UTC date being wrong for the user's timezone.
+  // end_date is exclusive in Oura API, so use tomorrow to include today's data.
+  const localDate = searchParams.get("date") || toDateString(new Date());
+  const [year, month] = localDate.split("-");
+  const startOfMonth = `${year}-${month}-01`;
   const startDate = searchParams.get("start") || startOfMonth;
-  const endDate = searchParams.get("end") || toDateString(now);
+  const tomorrow = new Date(localDate + "T12:00:00Z");
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  const endDate = searchParams.get("end") || tomorrow.toISOString().slice(0, 10);
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser?.ouraAccessToken) return NextResponse.json({ error: "No Oura token" }, { status: 400 });
