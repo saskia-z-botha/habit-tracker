@@ -45,16 +45,16 @@ export async function GET(request: NextRequest) {
   const listResults = await Promise.all(
     taskLists.map(async (list) => {
       const res = await fetch(
-        `${TASKS_API_BASE}/lists/${encodeURIComponent(list.id)}/tasks?showCompleted=true&showHidden=true`,
+        `${TASKS_API_BASE}/lists/${encodeURIComponent(list.id)}/tasks?showCompleted=true&showHidden=true&maxResults=100`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
-      const items = (data.items ?? []).map((t: { title: string; status: string; completed?: string; updated?: string }) => ({
+      const items = (data.items ?? []).map((t: { title: string; status: string; completed?: string; due?: string; updated?: string }) => ({
         title: t.title,
         status: t.status,
         completed: t.completed,
+        due: t.due,
         updated: t.updated,
-        matchesDate: t.completed ? t.completed.startsWith(date) : false,
       }));
       return { list: list.title, listId: list.id, tasks: items };
     })

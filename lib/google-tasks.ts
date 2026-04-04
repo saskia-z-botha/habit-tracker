@@ -33,7 +33,7 @@ export async function fetchCompletedTasksForDate(userId: string, date: string): 
     taskListIds.map(async (listId) => {
       // showHidden=true is required to see recently completed tasks
       const res = await fetch(
-        `${TASKS_API_BASE}/lists/${encodeURIComponent(listId)}/tasks?showCompleted=true&showHidden=true`,
+        `${TASKS_API_BASE}/lists/${encodeURIComponent(listId)}/tasks?showCompleted=true&showHidden=true&maxResults=100`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) return [];
