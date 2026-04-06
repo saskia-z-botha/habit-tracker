@@ -31,14 +31,20 @@ export async function fetchCompletedTasksForDate(userId: string, date: string): 
 
   const results = await Promise.all(
     taskListIds.map(async (listId) => {
-      // showHidden=true is required to see recently completed tasks
-      const res = await fetch(
-        `${TASKS_API_BASE}/lists/${encodeURIComponent(listId)}/tasks?showCompleted=true&showHidden=true&maxResults=100`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (!res.ok) return [];
-      const data = await res.json();
-      return (data.items ?? []).filter((t: { status: string; completed?: string; due?: string }) => {
+      // Paginate through all tasks — completed recurring instances can be buried past the first page
+      type RawTask = { status: string; completed?: string; due?: string };
+      const allItems: RawTask[] = [];
+      let pageToken: string | undefined;
+      do {
+        const url = `${TASKS_API_BASE}/lists/${encodeURIComponent(listId)}/tasks?showCompleted=true&showHidden=true&maxResults=100${pageToken ? `&pageToken=${pageToken}` : ""}`;
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) break;
+        const data = await res.json();
+        allItems.push(...(data.items ?? []));
+        pageToken = data.nextPageToken;
+      } while (pageToken);
+
+      return allItems.filter((t) => {
         if (t.status !== "completed" || !t.completed) return false;
         // Use due date if set — it reflects the local calendar day the user intended.
         if (t.due) return t.due.slice(0, 10) === date;

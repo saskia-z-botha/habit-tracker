@@ -41,22 +41,29 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Fetch all tasks from each list (completed + hidden)
+  // Fetch all tasks from each list (completed + hidden), paginating to get everything
   const listResults = await Promise.all(
     taskLists.map(async (list) => {
-      const res = await fetch(
-        `${TASKS_API_BASE}/lists/${encodeURIComponent(list.id)}/tasks?showCompleted=true&showHidden=true&maxResults=100`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
-      const items = (data.items ?? []).map((t: { title: string; status: string; completed?: string; due?: string; updated?: string }) => ({
+      type RawTask = { title: string; status: string; completed?: string; due?: string; updated?: string };
+      const allItems: RawTask[] = [];
+      let pageToken: string | undefined;
+      do {
+        const url = `${TASKS_API_BASE}/lists/${encodeURIComponent(list.id)}/tasks?showCompleted=true&showHidden=true&maxResults=100${pageToken ? `&pageToken=${pageToken}` : ""}`;
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) break;
+        const data = await res.json();
+        allItems.push(...(data.items ?? []));
+        pageToken = data.nextPageToken;
+      } while (pageToken);
+
+      const items = allItems.map((t) => ({
         title: t.title,
         status: t.status,
         completed: t.completed,
         due: t.due,
         updated: t.updated,
       }));
-      return { list: list.title, listId: list.id, tasks: items };
+      return { list: list.title, listId: list.id, taskCount: items.length, tasks: items };
     })
   );
 
