@@ -62,6 +62,17 @@ export async function GET(request: NextRequest) {
         completed: t.completed,
         due: t.due,
         updated: t.updated,
+        // Flag: would this task be detected as completed-via-recurrence for the queried date?
+        detectedViaRecurrence: (
+          t.status === "needsAction" && t.due && t.updated &&
+          t.due.slice(0, 10) > date &&
+          (() => {
+            const nextDay = new Date(date + "T12:00:00Z");
+            nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+            const nextDayStr = nextDay.toISOString().slice(0, 10);
+            return t.updated.slice(0, 10) === date || t.updated.slice(0, 10) === nextDayStr;
+          })()
+        ),
       }));
       return { list: list.title, listId: list.id, taskCount: items.length, tasks: items };
     })
