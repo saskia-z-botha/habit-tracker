@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Google Calendar + Tasks sync (within 50h window to cover timezone offsets)
+  // Google Calendar + Tasks sync (within 7 days — covers timezone offsets and retroactive event additions)
   const diffHours = (new Date().getTime() - date.getTime()) / (1000 * 60 * 60);
-  const shouldSync = diffHours >= -26 && diffHours <= 50;
+  const shouldSync = diffHours >= -26 && diffHours <= 168;
   if (dbUser.googleAccessToken && shouldSync) {
     const [calendarHabits, taskHabits] = await Promise.all([
       prisma.habit.findMany({

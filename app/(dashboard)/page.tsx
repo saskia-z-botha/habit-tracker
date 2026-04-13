@@ -46,9 +46,9 @@ export default async function TodayPage({ searchParams }: PageProps) {
     update: {},
   });
 
-  // Sync if within 2 days of now (handles timezone offsets where local date != UTC date)
+  // Sync if within 7 days of now — covers timezone offsets and retroactively-added calendar events
   const diffHours = (new Date().getTime() - date.getTime()) / (1000 * 60 * 60);
-  const shouldSync = diffHours >= -26 && diffHours <= 50; // covers UTC±14
+  const shouldSync = diffHours >= -26 && diffHours <= 168;
 
   const shouldSyncOura = dbUser.ouraAccessToken && shouldSync;
 
